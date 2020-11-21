@@ -1,22 +1,24 @@
-import serial
-import time
+#Code to listen to keypresses and use WASD and IJKL to controll the 4 servos on a Arduino controlled MeArm
+
+import serial #serial communication with the Arduino
+import time   
 import sys
-from pynput.keyboard import Listener,Key,Controller
+from pynput.keyboard import Listener,Key,Controller #Library checking for keypresses and key releases (also possible for the mouse)
 
 keyboard = Controller()
 _recorded_keys = []
 _record = 0
 
-usb='COM4'
-arduino=serial.Serial(usb, baudrate=9600, timeout=1)
-time.sleep(1)
+usb='COM4'  #or whichever usb port the arduino is connected to
+arduino=serial.Serial(usb, baudrate=9600, timeout=1)    #set up serial communication and name it arduino
+time.sleep(1)                                           #wait a bit to be sure serial communication is set up
 
 if(arduino.isOpen()):
     print ("Serial connection open.")
 
 
-def on_press(key):    
-    handle_key(key)
+def on_press(key):    #if a key is pressed
+    handle_key(key)     #call this function
     
 
 
@@ -26,11 +28,11 @@ def on_release(key):
         return False
 
 
-def handle_key(key):
+def handle_key(key):                    #when key pressed
     #print('{0} pressed'.format(key))
 
-    if is_valid_character(key):
-        if is_record_switch(key):
+    if is_valid_character(key):         #if its a valid caracter
+        if is_record_switch(key):       #is it the one of the record switches?
             toggle_record()
 
         elif is_play_switch(key):
@@ -92,7 +94,7 @@ def record(key):
     _recorded_keys.append(key)
 
 
-with Listener(
+with Listener(                      #the method used from pynput library checking the keyboard
         on_press=on_press,
         on_release=on_release) as listener:
-    listener.join()
+    listener.join()                 #wait until finished litening
